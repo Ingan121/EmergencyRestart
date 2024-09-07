@@ -1,5 +1,3 @@
-#define _AFXDLL
-#include <afx.h>
 #include <iostream>
 #include <windows.h>
 #include <winternl.h>
@@ -15,7 +13,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	lpNtShutdownSystem NtShutdownSystem;
 
 	//Load ntdll.dll
-	if ((hModule = LoadLibrary(_T("ntdll.dll"))) == 0) {
+	if ((hModule = LoadLibrary(L"ntdll.dll")) == 0) {
 		std::cerr << "Error opening ntdll.dll" << std::endl;
 		return 1;  
 	}
@@ -54,8 +52,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	* https://www.autoitscript.com/forum/topic/149641-how-to-force-a-power-down/page/2/?tab=comments#comment-1166299
 	* So the code calls NtSetSystemPowerState first, since in my tests it's a hair faster, and if that fails will call NtShutdownSystem as a fallback
 	*/
-	ULONG32 retNSSPS = NtSetSystemPowerState((POWER_ACTION)PowerSystemShutdown, (SYSTEM_POWER_STATE)PowerActionShutdown, 0);
-	ULONG32 retNSS = NtShutdownSystem(2); //2 = ShutdownPowerOff
+	ULONG32 retNSS = NtShutdownSystem(1); //2 = ShutdownReboot
+	ULONG32 retNSSPS = NtSetSystemPowerState((POWER_ACTION)PowerSystemShutdown, (SYSTEM_POWER_STATE)PowerActionShutdownReset, 0);
 
 	//At this point the PC is shut down if no problems have occurred
 	std::cerr << "System didn't shutdown" << std::endl << "NtSetSystemPowerState returned " << retNSSPS << std::endl << "NtShutdownSystem returned " << retNSS << std::endl;

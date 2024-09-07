@@ -1,5 +1,5 @@
-# PullThePlug
-(Almost) immediately shut off a Windows computer, (almost) like if someone pulled the power plug.  
+# EmergencyRestart
+(Almost) immediately reboot a Windows computer. If something goes wrong on your remote PC and you feel like it'll completely freeze soon, just run this to regain access to your PC.
 This is accomplished by calling two functions inside NTDLL.DLL that are normally ran at the end of the normal shutdown process, [NtShutdownSystem](http://undocumented.ntinternals.net/index.html?page=UserMode%2FUndocumented%20Functions%2FHardware%2FNtShutdownSystem.html) and NtSetSystemPowerState.  
 
 # Warning!  
@@ -15,5 +15,5 @@ Requires [Microsoft Visual C++ Redistributable for VS2015](https://docs.microsof
 # Usage  
 Just open the executable.  
 
-
+This is a fork of [PullThePlug](https://github.com/derivativeoflog7/PullThePlug), but it reboots the PC instead of shutting down.
 Most of the original work done by [hxhl95](https://www.codeproject.com/Articles/34194/Performing-emergency-shutdowns), I just reimplemented part of their code.

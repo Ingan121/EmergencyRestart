@@ -45,17 +45,21 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		std::cerr << "Error getting privilege" << std::endl;
 		return 4;
 	}
-	
-	/*
-	* Technically only NtSetSystemPowerState is needed to be called to power off a computer
-	* Howver, I found at least one report of NtSetSystemPowerState not working while NtShutdownSystem does
-	* https://www.autoitscript.com/forum/topic/149641-how-to-force-a-power-down/page/2/?tab=comments#comment-1166299
-	* So the code calls NtSetSystemPowerState first, since in my tests it's a hair faster, and if that fails will call NtShutdownSystem as a fallback
-	*/
-	ULONG32 retNSS = NtShutdownSystem(1); //2 = ShutdownReboot
-	ULONG32 retNSSPS = NtSetSystemPowerState((POWER_ACTION)PowerSystemShutdown, (SYSTEM_POWER_STATE)PowerActionShutdownReset, 0);
 
-	//At this point the PC is shut down if no problems have occurred
-	std::cerr << "System didn't shutdown" << std::endl << "NtSetSystemPowerState returned " << retNSSPS << std::endl << "NtShutdownSystem returned " << retNSS << std::endl;
-	return 5;
+    int result = MessageBox(NULL, L"Click Yes to immediately restart. Any unsaved data will be lost. Use this only as a last resort.", L"Emergency restart", MB_YESNO | MB_ICONWARNING);
+    if (result == IDYES) {
+		/*
+		* Technically only NtSetSystemPowerState is needed to be called to power off a computer
+		* Howver, I found at least one report of NtSetSystemPowerState not working while NtShutdownSystem does
+		* https://www.autoitscript.com/forum/topic/149641-how-to-force-a-power-down/page/2/?tab=comments#comment-1166299
+		* So the code calls NtSetSystemPowerState first, since in my tests it's a hair faster, and if that fails will call NtShutdownSystem as a fallback
+		*/
+		ULONG32 retNSS = NtShutdownSystem(1); // 1 = ShutdownReboot
+		ULONG32 retNSSPS = NtSetSystemPowerState((POWER_ACTION)PowerSystemShutdown, (SYSTEM_POWER_STATE)PowerActionShutdownReset, 0);
+
+		//At this point the PC is shut down if no problems have occurred
+		MessageBox(NULL, L"Failed to shut down the system.", L"Error", MB_OK | MB_ICONERROR);
+		return 5;
+    }
+	return 0;
 }
